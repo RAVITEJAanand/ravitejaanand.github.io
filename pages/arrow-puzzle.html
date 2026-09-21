@@ -251,10 +251,12 @@
       }));
       window.addEventListener("keydown", (event) => {
         if (!symbols[event.key] || !isPlaying || !acceptingInput) return;
-        const activeTag = document.activeElement?.tagName;
+        const activeEl = document.activeElement;
+        const activeTag = activeEl?.tagName;
+        const allowFocusedArrowButton = activeTag === "BUTTON" && activeEl?.classList.contains("arrow-btn");
         const isInteractiveFocus = ["INPUT", "TEXTAREA", "SELECT", "BUTTON", "A"].includes(activeTag) ||
-          document.activeElement?.isContentEditable;
-        if (isInteractiveFocus) return;
+          activeEl?.isContentEditable;
+        if (isInteractiveFocus && !allowFocusedArrowButton) return;
         event.preventDefault();
         handleInput(event.key);
       });
