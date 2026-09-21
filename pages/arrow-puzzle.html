@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="te" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arrow Puzzle గేమ్ | మన AP సేవలు</title>
+  <meta name="description" content="తెలుగులో సూచనలతో Arrow Puzzle మెమరీ గేమ్ ఆడండి.">
+  <link rel="icon" type="image/svg+xml" href="../assets/images/mana_logo.svg">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <script defer src="../assets/js/script.js"></script>
+  <script defer src="../assets/js/automation.js"></script>
+  <style>
+    .game-wrap { max-width: 760px; margin: 24px auto; }
+    .game-card { background: var(--surface-color, #fff); border: 1px solid var(--border-color, #e5e7eb); border-radius: 18px; padding: 22px; box-shadow: 0 10px 20px rgba(2, 83, 115, 0.08); }
+    .game-status { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .game-chip { background: #f8fafc; border-radius: 12px; padding: 10px 12px; text-align: center; font-weight: 700; }
+    .sequence-box { min-height: 62px; border: 2px dashed #cbd5e1; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; letter-spacing: 4px; margin-bottom: 14px; padding: 10px; }
+    .message-box { border-radius: 12px; padding: 12px; margin-bottom: 14px; background: #eff6ff; font-weight: 600; }
+    .pad-grid { display: grid; grid-template-columns: repeat(3, minmax(70px, 1fr)); gap: 10px; max-width: 320px; margin: 0 auto 14px; }
+    .arrow-btn, .control-btn { border: 0; border-radius: 12px; font-size: 1.4rem; font-weight: 700; padding: 12px; cursor: pointer; transition: transform 0.12s ease; }
+    .arrow-btn:active, .control-btn:active { transform: scale(0.96); }
+    .arrow-btn { background: #0f766e; color: #fff; }
+    .control-row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+    .control-btn { background: #1d4ed8; color: #fff; font-size: 1rem; padding: 10px 14px; }
+    .answer-box { margin-top: 14px; font-weight: 700; color: #0f172a; }
+    @media (max-width: 560px) { .game-status { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="top-utility-bar">
+    <div class="container utility-content">
+      <div class="govt-badge-text"><span class="govt-seal-dot"></span> <span>మన AP సేవలు - ఫన్ గేమ్ జోన్</span></div>
+      <div class="utility-actions">
+        <button id="langToggleBtn" class="lang-toggle-btn">🌐 English</button>
+        <button id="themeToggleBtn" class="theme-toggle-btn">🌙 డార్క్ మోడ్</button>
+      </div>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="container header-container">
+      <a href="../index.html" class="brand-wrapper">
+        <svg class="brand-emblem-svg" width="48" height="48" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="48" fill="#013449" stroke="#f59e0b" stroke-width="4"/>
+          <circle cx="50" cy="50" r="40" fill="#025373" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4 2"/>
+          <path d="M50 18 L55 32 L70 32 L58 41 L62 55 L50 46 L38 55 L42 41 L30 32 L45 32 Z" fill="#f59e0b"/>
+          <text x="50" y="72" font-size="16" font-family="'Outfit', sans-serif" font-weight="900" fill="#ffffff" text-anchor="middle">AP</text>
+          <text x="50" y="85" font-size="8" font-family="'Noto Sans Telugu', sans-serif" font-weight="700" fill="#f59e0b" text-anchor="middle">సేవలు</text>
+        </svg>
+        <div class="brand-info">
+          <div class="site-title">మన AP సేవలు</div>
+          <div class="site-tagline">Arrow Puzzle మెమరీ గేమ్</div>
+        </div>
+      </a>
+      <nav id="mainNav" class="main-nav">
+        <a href="../index.html" class="nav-link">🏠 హోమ్</a>
+        <a href="arrow-puzzle.html" class="nav-link active">🧩 Arrow Puzzle</a>
+      </nav>
+      <button id="mobileMenuBtn" class="mobile-menu-btn" aria-label="Mobile Navigation">☰</button>
+    </div>
+  </header>
+
+  <main class="container section-padding">
+    <div class="guide-header-hero">
+      <div class="container">
+        <div class="breadcrumbs">
+          <a href="../index.html">హోమ్</a>
+          <span>/</span>
+          <span>Arrow Puzzle</span>
+        </div>
+        <h1 class="guide-hero-title">🧩 Arrow Puzzle గేమ్</h1>
+        <p class="guide-hero-subtitle">బాణాల క్రమాన్ని గుర్తుంచుకుని అదే క్రమంలో నొక్కండి. అన్ని ఫలితాలు తెలుగు లోనే చూపిస్తాం.</p>
+      </div>
+    </div>
+
+    <section class="game-wrap">
+      <div class="game-card">
+        <div class="game-status">
+          <div class="game-chip">లెవల్: <span id="levelValue">1</span></div>
+          <div class="game-chip">స్కోర్: <span id="scoreValue">0</span></div>
+          <div class="game-chip">హై స్కోర్: <span id="bestValue">0</span></div>
+        </div>
+
+        <div id="sequenceBox" class="sequence-box">స్టార్ట్ నొక్కండి</div>
+        <div id="messageBox" class="message-box">గేమ్ ప్రారంభించడానికి "స్టార్ట్" నొక్కండి.</div>
+
+        <div class="pad-grid">
+          <div></div>
+          <button class="arrow-btn" data-key="ArrowUp" aria-label="పైకి">⬆️</button>
+          <div></div>
+          <button class="arrow-btn" data-key="ArrowLeft" aria-label="ఎడమకు">⬅️</button>
+          <button class="arrow-btn" data-key="ArrowDown" aria-label="కిందకు">⬇️</button>
+          <button class="arrow-btn" data-key="ArrowRight" aria-label="కుడికి">➡️</button>
+        </div>
+
+        <div class="control-row">
+          <button id="startBtn" class="control-btn">▶️ స్టార్ట్</button>
+          <button id="resetBtn" class="control-btn">🔄 రీసెట్</button>
+        </div>
+
+        <div id="answerBox" class="answer-box"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (() => {
+      const symbols = { ArrowUp: "⬆️", ArrowDown: "⬇️", ArrowLeft: "⬅️", ArrowRight: "➡️" };
+      const words = { ArrowUp: "పై", ArrowDown: "కింద", ArrowLeft: "ఎడమ", ArrowRight: "కుడి" };
+      const keys = Object.keys(symbols);
+
+      const levelEl = document.getElementById("levelValue");
+      const scoreEl = document.getElementById("scoreValue");
+      const bestEl = document.getElementById("bestValue");
+      const seqEl = document.getElementById("sequenceBox");
+      const msgEl = document.getElementById("messageBox");
+      const ansEl = document.getElementById("answerBox");
+      const startBtn = document.getElementById("startBtn");
+      const resetBtn = document.getElementById("resetBtn");
+      const arrowBtns = Array.from(document.querySelectorAll(".arrow-btn"));
+
+      let level = 1;
+      let score = 0;
+      let best = Number(localStorage.getItem("arrowPuzzleBest") || 0);
+      let sequence = [];
+      let input = [];
+      let isPlaying = false;
+      let acceptingInput = false;
+
+      const updateStats = () => {
+        levelEl.textContent = String(level);
+        scoreEl.textContent = String(score);
+        bestEl.textContent = String(best);
+      };
+
+      const randomKey = () => keys[Math.floor(Math.random() * keys.length)];
+      const answerText = () => sequence.map((item) => words[item]).join(" → ");
+      const visualText = (arr) => arr.map((item) => symbols[item]).join(" ");
+
+      const lockInput = (locked) => {
+        arrowBtns.forEach((btn) => { btn.disabled = locked; btn.style.opacity = locked ? "0.55" : "1"; });
+        acceptingInput = !locked;
+      };
+
+      const startRound = () => {
+        input = [];
+        sequence = Array.from({ length: level + 2 }, randomKey);
+        lockInput(true);
+        seqEl.textContent = visualText(sequence);
+        msgEl.textContent = "గమనించండి... ఇది ఈ రౌండ్ ప్యాటర్న్.";
+        ansEl.textContent = "";
+        setTimeout(() => {
+          seqEl.textContent = "ఇప్పుడు మీరు నొక్కండి";
+          msgEl.textContent = "క్రమం గుర్తుంచుకుని బాణాలు నొక్కండి. (కీబోర్డ్ కూడా పనిచేస్తుంది)";
+          lockInput(false);
+        }, 1900);
+      };
+
+      const failRound = () => {
+        isPlaying = false;
+        lockInput(true);
+        msgEl.textContent = "❌ తప్పు అయ్యింది. మళ్లీ ప్రయత్నించండి!";
+        ansEl.textContent = `సరైన సమాధానం: ${answerText()} (${visualText(sequence)})`;
+      };
+
+      const passRound = () => {
+        score += 1;
+        level += 1;
+        if (score > best) {
+          best = score;
+          localStorage.setItem("arrowPuzzleBest", String(best));
+        }
+        updateStats();
+        msgEl.textContent = "✅ బాగా ఆడారు! తదుపరి లెవల్ వస్తుంది.";
+        ansEl.textContent = `ఈ రౌండ్ సమాధానం: ${answerText()}`;
+        setTimeout(startRound, 950);
+      };
+
+      const handleInput = (key) => {
+        if (!isPlaying || !acceptingInput) return;
+        input.push(key);
+        seqEl.textContent = visualText(input);
+        const idx = input.length - 1;
+        if (sequence[idx] !== key) return failRound();
+        if (input.length === sequence.length) passRound();
+      };
+
+      startBtn.addEventListener("click", () => {
+        level = 1;
+        score = 0;
+        isPlaying = true;
+        updateStats();
+        startRound();
+      });
+
+      resetBtn.addEventListener("click", () => {
+        level = 1;
+        score = 0;
+        sequence = [];
+        input = [];
+        isPlaying = false;
+        lockInput(true);
+        updateStats();
+        seqEl.textContent = "స్టార్ట్ నొక్కండి";
+        msgEl.textContent = "గేమ్ రీసెట్ అయింది. మళ్లీ ప్రారంభించండి.";
+        ansEl.textContent = "";
+      });
+
+      arrowBtns.forEach((btn) => btn.addEventListener("click", () => handleInput(btn.dataset.key)));
+      window.addEventListener("keydown", (event) => {
+        if (symbols[event.key]) {
+          event.preventDefault();
+          handleInput(event.key);
+        }
+      });
+
+      lockInput(true);
+      updateStats();
+    })();
+  </script>
+</body>
+</html>
