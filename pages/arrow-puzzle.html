@@ -241,7 +241,11 @@
         ansEl.textContent = "";
       });
 
-      arrowBtns.forEach((btn) => btn.addEventListener("click", () => handleInput(btn.dataset.key)));
+      arrowBtns.forEach((btn) => btn.addEventListener("click", () => {
+        const key = btn.dataset.key;
+        if (!key || !symbols[key]) return;
+        handleInput(key);
+      }));
       window.addEventListener("keydown", (event) => {
         if (symbols[event.key]) {
           event.preventDefault();
