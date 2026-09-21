@@ -261,9 +261,6 @@
         handleInput(event.key);
       };
       window.addEventListener("keydown", handleKeydown);
-      window.addEventListener("pagehide", () => {
-        window.removeEventListener("keydown", handleKeydown);
-      }, { once: true });
 
       lockInput(true);
       updateStats();
