@@ -249,7 +249,7 @@
         if (!key || !symbols[key]) return;
         handleInput(key);
       }));
-      window.addEventListener("keydown", (event) => {
+      const handleKeydown = (event) => {
         if (!symbols[event.key] || !isPlaying || !acceptingInput) return;
         const activeEl = document.activeElement;
         const activeTag = activeEl?.tagName;
@@ -259,7 +259,11 @@
         if (isInteractiveFocus && !allowFocusedArrowButton) return;
         event.preventDefault();
         handleInput(event.key);
-      });
+      };
+      window.addEventListener("keydown", handleKeydown);
+      window.addEventListener("pagehide", () => {
+        window.removeEventListener("keydown", handleKeydown);
+      }, { once: true });
 
       lockInput(true);
       updateStats();
