@@ -176,10 +176,12 @@
         sequence = Array.from({ length: level + 2 }, randomKey);
         lockInput(true);
         seqEl.textContent = visualText(sequence);
+        seqEl.setAttribute("aria-label", `ఈ రౌండ్ క్రమం: ${answerText()}`);
         msgEl.textContent = "గమనించండి... ఇది ఈ రౌండ్ ప్యాటర్న్.";
         ansEl.textContent = "";
         revealTimerId = setTimeout(() => {
           seqEl.textContent = "ఇప్పుడు మీరు నొక్కండి";
+          seqEl.setAttribute("aria-label", "ఇప్పుడు మీ ఇన్‌పుట్ ఇవ్వండి");
           msgEl.textContent = "క్రమం గుర్తుంచుకుని బాణాలు నొక్కండి. (కీబోర్డ్ కూడా పనిచేస్తుంది)";
           lockInput(false);
           revealTimerId = null;
@@ -237,6 +239,7 @@
         lockInput(true);
         updateStats();
         seqEl.textContent = "స్టార్ట్ నొక్కండి";
+        seqEl.setAttribute("aria-label", "గేమ్ ప్రారంభించడానికి స్టార్ట్ నొక్కండి");
         msgEl.textContent = "గేమ్ రీసెట్ అయింది. మళ్లీ ప్రారంభించండి.";
         ansEl.textContent = "";
       });
@@ -247,10 +250,9 @@
         handleInput(key);
       }));
       window.addEventListener("keydown", (event) => {
-        if (symbols[event.key]) {
-          event.preventDefault();
-          handleInput(event.key);
-        }
+        if (!symbols[event.key] || !isPlaying || !acceptingInput) return;
+        event.preventDefault();
+        handleInput(event.key);
       });
 
       lockInput(true);
