@@ -82,7 +82,7 @@
           <div class="game-chip">హై స్కోర్: <span id="bestValue">0</span></div>
         </div>
 
-        <div id="sequenceBox" class="sequence-box">స్టార్ట్ నొక్కండి</div>
+        <div id="sequenceBox" class="sequence-box" tabindex="-1">స్టార్ట్ నొక్కండి</div>
         <div id="messageBox" class="message-box" aria-live="polite" aria-atomic="true">గేమ్ ప్రారంభించడానికి "స్టార్ట్" నొక్కండి.</div>
 
         <div class="pad-grid">
@@ -163,11 +163,11 @@
       };
 
       const clearPendingTimers = () => {
-        if (revealTimerId) {
+        if (revealTimerId !== null) {
           clearTimeout(revealTimerId);
           revealTimerId = null;
         }
-        if (nextRoundTimerId) {
+        if (nextRoundTimerId !== null) {
           clearTimeout(nextRoundTimerId);
           nextRoundTimerId = null;
         }
@@ -185,6 +185,7 @@
           seqEl.textContent = "ఇప్పుడు మీరు నొక్కండి";
           msgEl.textContent = "క్రమం గుర్తుంచుకుని బాణాలు నొక్కండి. (కీబోర్డ్ కూడా పనిచేస్తుంది)";
           lockInput(false);
+          seqEl.focus();
           revealTimerId = null;
         }, REVEAL_DURATION_MS);
       };
@@ -253,10 +254,9 @@
         if (!symbols[event.key] || !isPlaying || !acceptingInput) return;
         const activeEl = document.activeElement;
         const activeTag = activeEl?.tagName;
-        const allowFocusedArrowButton = activeTag === "BUTTON" && activeEl?.classList.contains("arrow-btn");
         const isInteractiveFocus = ["INPUT", "TEXTAREA", "SELECT", "BUTTON", "A"].includes(activeTag) ||
           activeEl?.isContentEditable;
-        if (isInteractiveFocus && !allowFocusedArrowButton) return;
+        if (isInteractiveFocus) return;
         event.preventDefault();
         handleInput(event.key);
       };
