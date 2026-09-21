@@ -81,8 +81,8 @@
           <div class="game-chip">హై స్కోర్: <span id="bestValue">0</span></div>
         </div>
 
-        <div id="sequenceBox" class="sequence-box">స్టార్ట్ నొక్కండి</div>
-        <div id="messageBox" class="message-box">గేమ్ ప్రారంభించడానికి "స్టార్ట్" నొక్కండి.</div>
+        <div id="sequenceBox" class="sequence-box" aria-live="polite" aria-atomic="true">స్టార్ట్ నొక్కండి</div>
+        <div id="messageBox" class="message-box" aria-live="polite" aria-atomic="true">గేమ్ ప్రారంభించడానికి "స్టార్ట్" నొక్కండి.</div>
 
         <div class="pad-grid">
           <div></div>
@@ -98,7 +98,7 @@
           <button id="resetBtn" class="control-btn">🔄 రీసెట్</button>
         </div>
 
-        <div id="answerBox" class="answer-box"></div>
+        <div id="answerBox" class="answer-box" aria-live="polite" aria-atomic="true"></div>
       </div>
     </section>
   </main>
@@ -121,11 +121,28 @@
 
       let level = 1;
       let score = 0;
-      let best = Number(localStorage.getItem("arrowPuzzleBest") || 0);
+      const safeGetBest = () => {
+        try {
+          return Number(localStorage.getItem("arrowPuzzleBest") || 0);
+        } catch {
+          return 0;
+        }
+      };
+      const safeSetBest = (value) => {
+        try {
+          localStorage.setItem("arrowPuzzleBest", String(value));
+        } catch {
+          // ignore storage-unavailable environments
+        }
+      };
+
+      let best = safeGetBest();
       let sequence = [];
       let input = [];
       let isPlaying = false;
       let acceptingInput = false;
+      let revealTimerId = null;
+      let nextRoundTimerId = null;
 
       const updateStats = () => {
         levelEl.textContent = String(level);
@@ -142,17 +159,30 @@
         acceptingInput = !locked;
       };
 
+      const clearPendingTimers = () => {
+        if (revealTimerId) {
+          clearTimeout(revealTimerId);
+          revealTimerId = null;
+        }
+        if (nextRoundTimerId) {
+          clearTimeout(nextRoundTimerId);
+          nextRoundTimerId = null;
+        }
+      };
+
       const startRound = () => {
+        clearPendingTimers();
         input = [];
         sequence = Array.from({ length: level + 2 }, randomKey);
         lockInput(true);
         seqEl.textContent = visualText(sequence);
         msgEl.textContent = "గమనించండి... ఇది ఈ రౌండ్ ప్యాటర్న్.";
         ansEl.textContent = "";
-        setTimeout(() => {
+        revealTimerId = setTimeout(() => {
           seqEl.textContent = "ఇప్పుడు మీరు నొక్కండి";
           msgEl.textContent = "క్రమం గుర్తుంచుకుని బాణాలు నొక్కండి. (కీబోర్డ్ కూడా పనిచేస్తుంది)";
           lockInput(false);
+          revealTimerId = null;
         }, 1900);
       };
 
@@ -168,12 +198,15 @@
         level += 1;
         if (score > best) {
           best = score;
-          localStorage.setItem("arrowPuzzleBest", String(best));
+          safeSetBest(best);
         }
         updateStats();
         msgEl.textContent = "✅ బాగా ఆడారు! తదుపరి లెవల్ వస్తుంది.";
         ansEl.textContent = `ఈ రౌండ్ సమాధానం: ${answerText()}`;
-        setTimeout(startRound, 950);
+        nextRoundTimerId = setTimeout(() => {
+          nextRoundTimerId = null;
+          startRound();
+        }, 950);
       };
 
       const handleInput = (key) => {
@@ -186,6 +219,7 @@
       };
 
       startBtn.addEventListener("click", () => {
+        clearPendingTimers();
         level = 1;
         score = 0;
         isPlaying = true;
@@ -194,6 +228,7 @@
       });
 
       resetBtn.addEventListener("click", () => {
+        clearPendingTimers();
         level = 1;
         score = 0;
         sequence = [];
