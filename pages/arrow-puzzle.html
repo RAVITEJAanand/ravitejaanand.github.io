@@ -82,7 +82,7 @@
           <div class="game-chip">హై స్కోర్: <span id="bestValue">0</span></div>
         </div>
 
-        <div id="sequenceBox" class="sequence-box" aria-live="polite" aria-atomic="true">స్టార్ట్ నొక్కండి</div>
+        <div id="sequenceBox" class="sequence-box">స్టార్ట్ నొక్కండి</div>
         <div id="messageBox" class="message-box" aria-live="polite" aria-atomic="true">గేమ్ ప్రారంభించడానికి "స్టార్ట్" నొక్కండి.</div>
 
         <div class="pad-grid">
@@ -179,12 +179,10 @@
         sequence = Array.from({ length: level + 2 }, randomKey);
         lockInput(true);
         seqEl.textContent = visualText(sequence);
-        seqEl.setAttribute("aria-label", "ఈ రౌండ్ ప్యాటర్న్ ప్రదర్శనలో ఉంది");
         msgEl.textContent = "గమనించండి... ఇది ఈ రౌండ్ ప్యాటర్న్.";
         ansEl.textContent = "";
         revealTimerId = setTimeout(() => {
           seqEl.textContent = "ఇప్పుడు మీరు నొక్కండి";
-          seqEl.setAttribute("aria-label", "ఇప్పుడు మీ ఇన్‌పుట్ ఇవ్వండి");
           msgEl.textContent = "క్రమం గుర్తుంచుకుని బాణాలు నొక్కండి. (కీబోర్డ్ కూడా పనిచేస్తుంది)";
           lockInput(false);
           revealTimerId = null;
@@ -242,7 +240,6 @@
         lockInput(true);
         updateStats();
         seqEl.textContent = "స్టార్ట్ నొక్కండి";
-        seqEl.setAttribute("aria-label", "గేమ్ ప్రారంభించడానికి స్టార్ట్ నొక్కండి");
         msgEl.textContent = "గేమ్ రీసెట్ అయింది. మళ్లీ ప్రారంభించండి.";
         ansEl.textContent = "";
       });
@@ -254,6 +251,10 @@
       }));
       window.addEventListener("keydown", (event) => {
         if (!symbols[event.key] || !isPlaying || !acceptingInput) return;
+        const activeTag = document.activeElement?.tagName;
+        const isInteractiveFocus = ["INPUT", "TEXTAREA", "SELECT", "BUTTON", "A"].includes(activeTag) ||
+          document.activeElement?.isContentEditable;
+        if (isInteractiveFocus) return;
         event.preventDefault();
         handleInput(event.key);
       });
