@@ -109,6 +109,8 @@
       const symbols = { ArrowUp: "⬆️", ArrowDown: "⬇️", ArrowLeft: "⬅️", ArrowRight: "➡️" };
       const words = { ArrowUp: "పై", ArrowDown: "కింద", ArrowLeft: "ఎడమ", ArrowRight: "కుడి" };
       const keys = Object.keys(symbols);
+      const REVEAL_DURATION_MS = 1900;
+      const NEXT_ROUND_DELAY_MS = 950;
 
       const levelEl = document.getElementById("levelValue");
       const scoreEl = document.getElementById("scoreValue");
@@ -186,7 +188,7 @@
           msgEl.textContent = "క్రమం గుర్తుంచుకుని బాణాలు నొక్కండి. (కీబోర్డ్ కూడా పనిచేస్తుంది)";
           lockInput(false);
           revealTimerId = null;
-        }, 1900);
+        }, REVEAL_DURATION_MS);
       };
 
       const failRound = () => {
@@ -209,7 +211,7 @@
         nextRoundTimerId = setTimeout(() => {
           nextRoundTimerId = null;
           startRound();
-        }, 950);
+        }, NEXT_ROUND_DELAY_MS);
       };
 
       const handleInput = (key) => {
